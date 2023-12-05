@@ -1,59 +1,27 @@
 import './App.css';
-import {useState} from 'react';
-
+import { useState } from 'react';
+import { useEffect } from 'react';
+import axios from 'axios';
 
 function App() {
   
-  const [students, setStudents] = useState([
-  {
-    id: 1,
-    rollNo: 12,
-    name: "Dawood",
-    age: 18,
-    grade: "12th",
-    address: "Shoukat Town, Ghakhar Mandi"
-  },
-  {
-    id: 2,
-    rollNo: 14,
-    name: "Ahmad",
-    age: 20,
-    grade: "12th",
-    address: "Small Industrial Area, Model Town"
-  },
-  {
-    id: 3,
-    rollNo: 13,
-    name: "Huzaifa",
-    age: 21,
-    grade: "14th",
-    address: "Main Bazaar, Khayli Bypass Rd"
-  },
-  {
-    id: 4,
-    rollNo: 9,
-    name: "Ahsan",
-    age: 22,
-    grade: "14th",
-    address: "Iqbal Town, Rahwali"
-  },
-  {
-    id: 5,
-    rollNo: 4,
-    name: "Usama",
-    age: 19,
-    grade: "11th",
-    address: "7th Street, Gill Road"
-  },
-  {
-    id: 6,
-    rollNo: 8,
-    name: "Maarij",
-    age: 19,
-    grade: "13th",
-    address: "6th Street, Gill Road"
-  }
-]);
+const [students, setStudents] = useState([]);
+useEffect(() => {
+  const getStudents = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/students"
+      );
+      const students = response.data;
+      setStudents(students);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  getStudents();
+},[]);
+
+
 const [selectedStudent, setSelectedStudent] = useState(null);
 const [rollNo, setRollNo] = useState("");
 const [name, setName] = useState("");
@@ -61,23 +29,28 @@ const [age, setAge] = useState("");
 const [grade, setGrade] = useState("");
 const [address, setAddress] = useState("");
 
-const handleAddStudent = (event) => {
+const handleAddStudent = async (event) => {
   event.preventDefault();
-  const newStudent = {
-    id: students.length +1,
-    rollNo: rollNo,
-    name: name,
-    age: age,
-    grade: grade,
-    address: address
-  }
-  setStudents([...students, newStudent]);
-  setRollNo("");
-  setName("");
-  setAge("");
-  setGrade("");
-  setAddress("");
+  try {
+    const response = await axios.post("http://localhost:5000/students", {
+      id: students.length + 1,
+      rollNo: rollNo,
+      name: name,
+      age: age,
+      grade: grade,
+      address: address
+    });
+    const newStudent = response.data;
+    setStudents([...students, newStudent]);
+    setRollNo("");
+    setName("");
+    setAge("");
+    setGrade("");
+    setAddress(""); 
 
+  } catch (error) {
+    console.log(error);
+  }
 };
 const handleStudentClick = (student) => {
   setSelectedStudent(student);
