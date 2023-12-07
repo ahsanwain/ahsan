@@ -13,7 +13,7 @@ router.get('/students', (req, res) => {
   router.post('/students', (req, res) => {
     const newStudent = req.body;
     students.push(newStudent);
-    res.send('Student added successfully');
+    res.send(newStudent);
   });
   
   // PUT endpoint to update a student
@@ -24,7 +24,7 @@ router.get('/students', (req, res) => {
 
     if(index !== -1){
       students[index] = updatedStudent;
-      res.send('Student updated successfully');
+      res.send(updatedStudent);
     } else {
       res.status(404).send('Student not found');
     }
@@ -38,7 +38,7 @@ router.get('/students', (req, res) => {
           res.status(404).send('Student not found');
         } else {
               students.splice(index, 1);
-              res.send('Student deleted successfully');
+              res.send(students);
             }
   });
     
