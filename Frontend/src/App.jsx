@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
+import StudentForm from "./Components/StudentForm";
+import StudentList from "./Components/StudentList";
 
 function App() {
   const [students, setStudents] = useState([]);
@@ -111,114 +113,59 @@ function App() {
     setAddress("");
     setSelectedStudent(null);
   };
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    switch (name) {
+      case "rollNo":
+        setRollNo(value);
+        break;
+      case "name":
+        setName(value);
+        break;
+      case "age":
+        setAge(value);
+        break;
+      case "email":
+        setEmail(value);
+        break;
+      case "address":
+        setAddress(value);
+        break;
+      default:
+        break;
+    }
+  };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (selectedStudent) {
+      handleUpdateStudent(event);
+    } else {
+      handleAddStudent(event);
+    }
+  };
 
   return (
     <div>
-      {console.log("Hello World")}
       <header className="app-header">Add & Drop Students</header>
       <div className="app-container">
-        <div className="student-form">
-          <form
-            onSubmit={(event) =>
-              selectedStudent
-                ? handleUpdateStudent(event)
-                : handleAddStudent(event)
-            }
-            method="POST"
-          >
-            <input
-              value={rollNo}
-              onChange={(event) => setRollNo(event.target.value)}
-              placeholder="Roll No"
-              type="number"
-              id="rollNo"
-              name="rollNo"
-              required
-            />
-            <br />
-            <br />
-            <input
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              placeholder="Name"
-              type="text"
-              id="name"
-              name="name"
-              required
-            />
-            <br />
-            <br />
-            <input
-              value={age}
-              onChange={(event) => setAge(event.target.value)}
-              placeholder="Age"
-              type="number"
-              id="age"
-              name="age"
-              required
-            />
-            <br />
-            <br />
-            <input
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="email"
-              type="text"
-              id="email"
-              name="email"
-              required
-            />
-            <br />
-            <br />
-            <input
-              value={address}
-              onChange={(event) => setAddress(event.target.value)}
-              placeholder="Address"
-              type="text"
-              id="address"
-              name="address"
-              required
-            />
-            <br />
-            <br />
-            {selectedStudent ? (
-              <div className="edit-buttons">
-                <button type="submit">Save</button>
-                <button onClick={handleCancel}>Cancel</button>
-              </div>
-            ) : (
-              <button type="submit">Add Note</button>
-            )}
-          </form>
-        </div>
-
-        <div className="students-grid">
-          {students.map((student) => (
-            <div
-              key={student.id}
-              className="student-item"
-              onClick={() => handleStudentClick(student)}
-            >
-              <div className="student-header">
-                <button onClick={(event) => handleDelete(event, student.id)}>
-                  ❌
-                </button>
-              </div>
-              <h1>{student.name}</h1>
-              <p>{student.id}</p>
-              <hr />
-              <p>
-                <strong>Student Details:</strong>
-              </p>
-              <br />
-              <p>Roll No: {student.rollNo}</p>
-              <p>Age: {student.age}</p>
-              <p>Email: {student.email}</p>
-              <p>Address: {student.address}</p>
-            </div>
-          ))}
-        </div>
+        <StudentForm
+          rollNo={rollNo}
+          name={name}
+          age={age}
+          email={email}
+          address={address}
+          handleInputChange={handleInputChange}
+          handleSubmit={handleSubmit}
+          handleCancel={handleCancel}
+          selectedStudent={selectedStudent}
+        />
+        <StudentList
+          students={students}
+          handleStudentClick={handleStudentClick}
+          handleDelete={handleDelete}
+        />
       </div>
+
     </div>
   );
 }
