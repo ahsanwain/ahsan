@@ -15,9 +15,7 @@ router.post('/login', async (req, res) => {
     }
     const isValid = comparePassword(password, studentDB.password);
     if(isValid) {
-        req.session.user = {
-            username: username,
-        };
+        req.session.user = studentDB;
         res.status(200).send(req.session.user);
     } else {
         res.status(401).send("Invalid credentials");
@@ -36,9 +34,7 @@ router.post('/register', async (req, res) => {
                 username: username,
                 password: password,
             });
-            req.session.user = {
-                username: username,
-            };
+            req.session.user = newStudent;
             res.send(req.session.user);
         }
     } else {
