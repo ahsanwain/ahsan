@@ -4,7 +4,8 @@ import authRouter from './routes/auth.js';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
-import mongoose from 'mongoose';
+import passport from 'passport';
+import './strategies/local.js';
 
 
 const app = express();
@@ -22,17 +23,10 @@ app.use(
   })
 );
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use('/', authRouter);
-
-app.use( (req, res, next) => {
-  if(req.session.user){
-    next();
-  } else {
-    res.send(401);
-  }
-});
-
-
 app.use('/', studentsRouter);
 
 app.listen(port, () => {

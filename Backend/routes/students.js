@@ -1,8 +1,14 @@
 import { Router } from "express";
 import { students } from "../data.js";
-
 const router = Router();
 
+router.use( (req, res, next) => {
+  if(req.user){
+    next();
+  } else {
+    res.send(401);
+  }
+});
 
 // GET endpoint to retrieve all students
 router.get('/students', (req, res) => {
