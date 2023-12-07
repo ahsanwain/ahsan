@@ -49,10 +49,10 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/logout', (req, res) => {
-    if(req.session.user){
-        req.session.destroy(() => {
-            res.send("Logged out");
-        });
+    if(req.user){
+        req.session.destroy();
+        res.clearCookie('connect.sid', { path: '/'  });
+        res.send("Logged out");
     } else {
         res.send("No user to log out");
     }
