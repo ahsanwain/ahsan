@@ -1,31 +1,37 @@
 import { Router } from "express";
 import student from "../Database/schemas/student.js";
+import { hashPassword, comparePassword } from "../Utils/helper.js";
 
 const router = Router();
 
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    if(username && password){
-        if (username === "admin" && password === "admin") {
-            req.session.user = {
+    if(!username || !password){
+        res.status(400).send("Please enter username and password");
+    }
+    const studentDB = await student.findOne({ username: username });
+    if(!studentDB){
+        res.status(401).send("Invalid credentials");
+    }
+    const isValid = comparePassword(password, studentDB.password);
+    if(isValid) {
+        req.session.user = {
             username: username,
-            };
-        res.send(req.session.user);
-        } else {
-            res.send("Username or password incorrect");
-        }
+        };
+        res.status(200).send(req.session.user);
     } else {
-        res.sendStatus(400).send("Please enter username and password");
+        res.status(401).send("Invalid credentials");
     }
 });
 
 router.post('/register', async (req, res) => {
-    const { username, password } = req.body;
-    if(username && password){
+    const username = req.body.username;
+    if(username && req.body.password){
         const studentDB = await student.findOne({ username: username });
         if(studentDB){
-            res.send("User already exists");
+            res.status(400).send("User already exists");
         } else {
+            const password = hashPassword(req.body.password);
             const newStudent = await student.create({
                 username: username,
                 password: password,
@@ -36,7 +42,7 @@ router.post('/register', async (req, res) => {
             res.send(req.session.user);
         }
     } else {
-        res.send("Please enter username and password");
+        res.status(400).send("Please enter username and password");
     }
 });
 
